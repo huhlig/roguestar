@@ -1,0 +1,18 @@
+[package]
+name = "roguestar"
+version = "0.1.0"
+authors = ["Hans W. Uhlig <huhlig@gmail.com>"]
+edition = "2018"
+license = "Apache-2.0"
+keywords = ["roguelike"]
+description = "An experimental Roguelike Adventure across the stars."
+
+[dependencies]
+bevy = "0.2"
+rand = "0.7"
+rand_xoshiro = "0.4"
+ron = "0.6"
+serde = "1.0"
+
+[dependencies.nominae]
+git = "https://github.com/huhlig/nominae-rs.git"
