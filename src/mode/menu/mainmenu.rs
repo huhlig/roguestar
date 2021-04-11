@@ -48,7 +48,7 @@ pub fn setup_mainmenu(
                 flex_direction: FlexDirection::Row,
                 ..Default::default()
             },
-            material: materials.add(Color::NONE.into()),
+            material: materials.add(asset_server.load("backgrounds/BaseBlue.png").into()),
             ..Default::default()
         })
         .insert(MainMenu)
