@@ -16,18 +16,45 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+use crate::common::WorldCamera;
+use crate::mode::hyperspace::Hyperspace;
 use crate::mode::GameState;
 use bevy::prelude::*;
+use bevy::render::camera::Camera;
 
 pub fn setup_worldgen(
     mut commands: Commands,
+    windows: Res<Windows>,
+    mut state: ResMut<State<GameState>>,
     asset_server: Res<AssetServer>,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
-    mut state: ResMut<State<GameState>>,
+    mut camera_query: Query<(Entity, &Camera), With<WorldCamera>>,
 ) {
     trace!("Setup WorldGen");
-    super::generate_galaxy(commands, asset_server, materials);
+    for (entity, camera) in camera_query.iter_mut() {
+        commands.entity(entity).with_children(|parent| {
+            trace!("Adding Hyperspace Background to Camera({:?})", camera.name);
+            let window = windows.get(camera.window).unwrap();
+            let hyperspace_background_texture = crate::utility::texgen::hyperspace_texture(
+                window.width() as usize,
+                window.height() as usize,
+                0,
+                0,
+            );
+            parent
+                // Spawn Hyperspace Background
+                .spawn_bundle(SpriteBundle {
+                    material: materials.add(ColorMaterial::texture(
+                        textures.add(hyperspace_background_texture),
+                    )),
+                    transform: Transform::from_xyz(0.0, 0.0, -999.0),
+                    ..Default::default()
+                })
+                .insert(Hyperspace);
+        });
+    }
+    super::generate_galaxy(commands, asset_server, textures, materials);
     state.set(GameState::HyperspaceMode).unwrap();
 }
 
@@ -35,5 +62,4 @@ pub fn update_worldgen(mut commands: Commands, mut state: ResMut<State<GameState
 
 pub fn cleanup_worldgen(mut commands: Commands) {
     trace!("Cleanup WorldGen");
-    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
 }

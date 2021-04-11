@@ -16,8 +16,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+use crate::common::WorldCamera;
 use crate::mode::hyperspace::{Hyperspace, SectorInfo};
 use bevy::prelude::*;
+use bevy::render::camera::Camera;
 use bevy::render::texture::{Extent3d, ImageType, TextureDimension, TextureFormat};
 use bevy::text::Text2dSize;
 use rand::Rng;
@@ -26,11 +28,13 @@ use rand_xoshiro::rand_core::SeedableRng;
 pub fn generate_galaxy(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
+    mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
 ) {
     let seed = 50;
     let mut rng = rand_xoshiro::Xoshiro128PlusPlus::seed_from_u64(seed);
-    let texture_handle = asset_server.load("sprites/hyperwell2.png");
+    let texture_handle = asset_server.load("decals/hyperwell2.png");
+    let material_handle = materials.add(texture_handle.into());
 
     (0..102)
         .map(crate::utility::hexmap::hex_spiral)
@@ -45,7 +49,7 @@ pub fn generate_galaxy(
                 trace!("({},{}) @ {}", center.x, center.y, &info.identifier);
                 commands
                     .spawn_bundle(SpriteBundle {
-                        material: materials.add(texture_handle.clone().into()),
+                        material: material_handle.clone(),
                         sprite: Sprite::new(Vec2::new(1.0, 1.0)),
                         transform: Transform::from_xyz(center.x, center.y, 0.0),
                         ..Default::default()

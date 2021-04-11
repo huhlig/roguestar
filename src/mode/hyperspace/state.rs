@@ -17,42 +17,35 @@
 //
 
 use crate::common::WorldCamera;
+use crate::mode::hyperspace::Hyperspace;
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
 
 pub fn setup_hyperspace(
     mut commands: Commands,
-    windows: Res<Windows>,
-    mut textures: ResMut<Assets<Texture>>,
-    mut materials: ResMut<Assets<ColorMaterial>>,
+    mut hyperspace_query: Query<&mut Visible, With<Hyperspace>>,
     mut camera_query: Query<(Entity, &Camera, &mut Transform), With<WorldCamera>>,
-    mut hyperspace_mode: Query<()>
 ) {
     trace!("Setup Hyperspace");
     // Set Camera to right Scale and create background
     for (entity, camera, mut transform) in camera_query.iter_mut() {
         trace!("Configuring Camera({:?})", camera.name);
-        let window = windows.get(camera.window).unwrap();
-        let background_texture = crate::utility::texgen::hyperspace_texture(
-            window.width() as usize,
-            window.height() as usize,
-            0,
-            0,
-        );
         transform.scale = Vec3::new(0.01, 0.01, 1.0);
-        commands.entity(entity).with_children(|camera| {
-            camera.spawn_bundle(SpriteBundle {
-                material: materials.add(ColorMaterial::texture(textures.add(background_texture))),
-                transform: Transform::from_xyz(0.0, 0.0, -999.0),
-                ..Default::default()
-            });
-        });
     }
-    for visible
+    trace!("Making Hyperspace Objects Visible");
+    for mut visible in hyperspace_query.iter_mut() {
+        visible.is_visible = true;
+    }
 }
 
 pub fn update_hyperspace(mut commands: Commands) {}
 
-pub fn cleanup_hyperspace(mut commands: Commands) {
-    trace!("Cleanup MainMenu");
+pub fn cleanup_hyperspace(
+    mut commands: Commands,
+    mut hyperspace_query: Query<&mut Visible, With<Hyperspace>>,
+) {
+    trace!("Cleanup Hyperspace");
+    for mut visible in hyperspace_query.iter_mut() {
+        visible.is_visible = false;
+    }
 }
