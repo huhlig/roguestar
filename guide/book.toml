@@ -1,0 +1,7 @@
+[book]
+title = "Roguestar Design Guide"
+authors = ["Hans W. Uhlig <huhlig@gmail.com>"]
+
+[output.html] # enable html output
+
+[output.linkcheck]  # enable the "mdbook-linkcheck" renderer

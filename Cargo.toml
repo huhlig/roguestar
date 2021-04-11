@@ -1,0 +1,25 @@
+[package]
+name = "roguestar"
+edition = "2018"
+version = "0.1.0"
+license = "GPLv3"
+keywords = ["roguelike"]
+authors = ["Hans W. Uhlig <huhlig@gmail.com>"]
+description = "An experimental Roguelike Adventure across the stars."
+
+[dependencies]
+auto_ops = "0.1"
+noise = "0.7"
+rand = "0.7"
+rand_distr = "0.3"
+rand_xoshiro = "0.4"
+ron = "0.6"
+rstar = "0.8"
+serde = "1.0"
+
+[dependencies.bevy]
+git = "https://github.com/bevyengine/bevy.git"
+branch = "main"
+
+[dependencies.nominae]
+git = "https://github.com/huhlig/nominae-rs.git"

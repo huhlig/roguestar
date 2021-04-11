@@ -1,0 +1,65 @@
+SpriteSheet(
+    file: "npc-grey",
+    sprites: [
+        Sprite(
+            geometry: min: (  0,  0), max: ( 64, 64)
+        ),
+        Sprite(
+            geometry: min: ( 64,  0), max: (128, 64)
+        ),
+        Sprite(
+            geometry: min: (128,  0), max: (192, 64)
+        ),
+        Sprite(
+            geometry: min: (192,  0), max: (256, 64)
+        ),
+        Sprite(
+            geometry: min: (256,  0), max: (320, 64)
+        ),
+        Sprite(
+            geometry: min: (  0,  64), max: ( 64, 128)
+        ),
+        Sprite(
+            geometry: min: ( 64,  64), max: (128, 128)
+        ),
+        Sprite(
+            geometry: min: (128,  64), max: (192, 128)
+        ),
+        Sprite(
+            geometry: min: (192,  64), max: (256, 128)
+        ),
+        Sprite(
+            geometry: min: (256,  64), max: (320, 128)
+        ),
+        Sprite(
+            geometry: min: (  0,  128), max: ( 64, 192)
+        ),
+        Sprite(
+            geometry: min: ( 64,  128), max: (128, 192)
+        ),
+        Sprite(
+            geometry: min: (128,  128), max: (192, 192)
+        ),
+        Sprite(
+            geometry: min: (192,  128), max: (256, 192)
+        ),
+        Sprite(
+            geometry: min: (256,  128), max: (320, 192)
+        ),
+        Sprite(
+            geometry: min: (  0,  192), max: ( 64, 256)
+        ),
+        Sprite(
+            geometry: min: ( 64,  192), max: (128, 256)
+        ),
+        Sprite(
+            geometry: min: (128,  192), max: (192, 256)
+        ),
+        Sprite(
+            geometry: min: (192,  192), max: (256, 256)
+        ),
+        Sprite(
+            geometry: min: (256,  192), max: (320, 256)
+        ),
+    ]
+)
