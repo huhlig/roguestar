@@ -16,6 +16,7 @@ rand_xoshiro = "0.4"
 ron = "0.6"
 rstar = "0.8"
 serde = "1.0"
+tracing = "0.1"
 
 [dependencies.bevy]
 git = "https://github.com/bevyengine/bevy.git"

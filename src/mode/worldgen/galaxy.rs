@@ -33,8 +33,7 @@ pub fn generate_galaxy(
 ) {
     let seed = 50;
     let mut rng = rand_xoshiro::Xoshiro128PlusPlus::seed_from_u64(seed);
-    let texture_handle = asset_server.load("decals/hyperwell2.png");
-    let material_handle = materials.add(texture_handle.into());
+    let material_handle = materials.add(asset_server.load("decals/hyperwell2.png").into());
 
     (0..102)
         .map(crate::utility::hexmap::hex_spiral)
@@ -51,7 +50,11 @@ pub fn generate_galaxy(
                     .spawn_bundle(SpriteBundle {
                         material: material_handle.clone(),
                         sprite: Sprite::new(Vec2::new(1.0, 1.0)),
-                        transform: Transform::from_xyz(center.x, center.y, 0.0),
+                        transform: Transform::from_xyz(center.x, center.y, -30.0),
+                        visible: Visible {
+                            is_visible: false,
+                            is_transparent: false,
+                        },
                         ..Default::default()
                     })
                     .insert(info)

@@ -2916,6 +2916,7 @@ dependencies = [
  "ron",
  "rstar",
  "serde",
+ "tracing",
 ]
 
 [[package]]

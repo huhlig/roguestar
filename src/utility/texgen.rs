@@ -16,7 +16,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-use bevy::prelude::Texture;
+use bevy::prelude::*;
 use bevy::render::texture::{Extent3d, TextureDimension, TextureFormat};
 
 pub fn hyperspace_texture(width: usize, height: usize, layer: u8, frame: u8) -> Texture {
@@ -28,19 +28,26 @@ pub fn hyperspace_texture(width: usize, height: usize, layer: u8, frame: u8) -> 
     let mut data = Vec::new();
     for x in 0..width {
         for y in 0..height {
-            let val = (perlin.get([x as f64, y as f64, frame as f64]) * 255.0) as u8;
+            let nx = 0.5 + x as f64;
+            let ny = 0.5 + y as f64;
+            let e// Noise Equation 
+                = 1.00 * perlin.get([1.0 * nx, 1.0 * ny])
+                + 0.50 * perlin.get([2.0 * nx, 2.0 * ny])
+                + 0.25 * perlin.get([4.0 * nx, 4.0 * ny]);
+            let val = ((e / (1.0 + 0.5 + 0.25)) * 255.0) as u8;
+            //trace!("({},{}) - {}", nx, ny, val);
             // Push In R, G, B, A Channels
             data.push(val);
             data.push(0);
             data.push(0);
-            data.push(255);
+            data.push(val);
         }
     }
     Texture::new(
         Extent3d::new(width as u32, height as u32, 1),
         TextureDimension::D2,
         data,
-        TextureFormat::Rgba8Uint,
+        TextureFormat::Rgba8UnormSrgb,
     )
 }
 

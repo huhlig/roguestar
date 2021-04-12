@@ -41,6 +41,7 @@ fn main() {
     App::build()
         .add_plugins(DefaultPlugins)
         .add_plugin(FrameTimeDiagnosticsPlugin)
+        .add_plugin(LogDiagnosticsPlugin::default())
         .insert_resource(WindowDescriptor {
             title: format!("Roguestar v{}", env!("CARGO_PKG_VERSION")),
             width: 800.,
@@ -81,7 +82,7 @@ fn main() {
                 .with_system(mode::worldgen::update_worldgen.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::SectorspaceMode)
+            SystemSet::on_exit(mode::GameState::WorldGen)
                 .with_system(mode::worldgen::cleanup_worldgen.system()),
         )
         // Ground Travel State

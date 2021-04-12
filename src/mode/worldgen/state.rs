@@ -21,7 +21,17 @@ use crate::mode::hyperspace::Hyperspace;
 use crate::mode::GameState;
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
+use tracing::instrument;
 
+#[instrument(skip(
+    commands,
+    windows,
+    state,
+    asset_server,
+    textures,
+    materials,
+    camera_query
+))]
 pub fn setup_worldgen(
     mut commands: Commands,
     windows: Res<Windows>,
@@ -48,6 +58,10 @@ pub fn setup_worldgen(
                     material: materials.add(ColorMaterial::texture(
                         textures.add(hyperspace_background_texture),
                     )),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
                     transform: Transform::from_xyz(0.0, 0.0, -999.0),
                     ..Default::default()
                 })
@@ -55,10 +69,11 @@ pub fn setup_worldgen(
         });
     }
     super::generate_galaxy(commands, asset_server, textures, materials);
-    state.set(GameState::HyperspaceMode).unwrap();
 }
 
-pub fn update_worldgen(mut commands: Commands, mut state: ResMut<State<GameState>>) {}
+pub fn update_worldgen(mut commands: Commands, mut state: ResMut<State<GameState>>) {
+    state.set(GameState::HyperspaceMode).unwrap();
+}
 
 pub fn cleanup_worldgen(mut commands: Commands) {
     trace!("Cleanup WorldGen");
