@@ -16,9 +16,14 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+//! Worldgen is responsible for loading or creating a new Universe to play in.
+mod params;
+mod sector;
+mod setup;
+mod galaxy;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+pub use self::params::Parameters;
+pub use self::galaxy::generate_galaxy;
+pub use self::sector::generate_sector;
+pub use self::setup::{cleanup_worldgen, setup_worldgen, update_worldgen};
+

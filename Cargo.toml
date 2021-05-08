@@ -10,9 +10,9 @@ description = "An experimental Roguelike Adventure across the stars."
 [dependencies]
 auto_ops = "0.1"
 noise = "0.7"
-rand = "0.7"
-rand_distr = "0.3"
-rand_xoshiro = "0.4"
+rand = "0.8"
+rand_distr = "0.4"
+rand_xoshiro = "0.6"
 ron = "0.6"
 rstar = "0.8"
 serde = "1.0"
@@ -21,6 +21,10 @@ tracing = "0.1"
 [dependencies.bevy]
 git = "https://github.com/bevyengine/bevy.git"
 branch = "main"
+
+[dependencies.bevy_tilemap]
+git = "https://github.com/joshuajbouw/bevy_tilemap.git"
+branch = "master"
 
 [dependencies.nominae]
 git = "https://github.com/huhlig/nominae-rs.git"

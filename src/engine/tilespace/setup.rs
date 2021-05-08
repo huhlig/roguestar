@@ -16,9 +16,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+use bevy::prelude::*;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+pub fn initialize_tilespace(mut commands: Commands) {}
+
+pub fn setup_tilespace(mut commands: Commands) {}
+
+pub fn update_tilespace(mut commands: Commands) {}
+
+pub fn cleanup_tilespace(mut commands: Commands) {}

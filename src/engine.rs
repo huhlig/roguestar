@@ -16,9 +16,28 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+mod common;
+pub mod cyberspace;
+mod faction;
+pub mod hyperspace;
+pub mod mainmenu;
+pub mod pausemenu;
+pub mod sectorspace;
+pub mod tilespace;
+mod worldclock;
+pub mod worldgen;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+/// State of Game Engine
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum GameState {
+    MainMenu,
+    WorldGen,
+    TilespaceMode,
+    SectorspaceMode,
+    HyperspaceMode,
+    CyberspaceMode,
+    PauseMenu,
+}
+
+pub use self::common::PlayerAvatar;
+pub use self::worldclock::{world_clock_update, WorldClock};

@@ -16,9 +16,13 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+use super::{generate_sector, Parameters};
+use bevy::prelude::*;
+use crate::utility::hex::{HexIterator, HexLocation};
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+/// Generate Galaxy
+pub fn generate_galaxy(mut commands: &mut Commands, parameters: &Parameters) {
+    HexIterator::new(HexLocation::from_axial(0, 0), 100).for_each(|location| {
+        generate_sector(&mut commands, parameters, location);
+    });
+}

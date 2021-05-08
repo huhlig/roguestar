@@ -16,9 +16,10 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+use bevy::prelude::*;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+pub struct PauseMenuButtonMaterials {
+    pub normal: Handle<ColorMaterial>,
+    pub hovered: Handle<ColorMaterial>,
+    pub pressed: Handle<ColorMaterial>,
+}

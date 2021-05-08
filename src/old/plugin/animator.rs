@@ -127,7 +127,7 @@ pub fn sprite_animation_system(
                     if let Some(animation) = collection.animations.get(animation_idx) {
                         // Identify next_frame
                         let next_frame = if let Some(frame_idx) = animator.current_frame {
-                            // Advance to next Animation Frame based on mode.
+                            // Advance to next Animation Frame based on engine.
                             match animation.mode {
                                 SpriteAnimationMode::Forward => {
                                     if frame_idx + 1 < animation.frames.len() {
@@ -224,7 +224,7 @@ pub fn sprite_animation_system(
 /// Advance the Sprite Animator and return if this method should be called a second time
 fn advance_animator(&mut animator: SpriteAnimator, &animation: SpriteAnimation) -> bool {
     if let Some(frame_idx) = animator.current_frame {
-        // Animation has already started and we should advance to the next frame based on mode.
+        // Animation has already started and we should advance to the next frame based on engine.
         match animation.mode {
             SpriteAnimationMode::Forward => {
                 if frame_idx + 1 < animation.frames.len() {

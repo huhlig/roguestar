@@ -16,9 +16,15 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+/// Sector Radius
+pub const SECTOR_RADIUS: f32 = 20.0;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+/// User Configurable Generation Parameters
+pub struct Parameters {
+    /// Master Seed used by all generation
+    pub seed: u64,
+    /// Likelyhood of a primary existing in a sector.
+    pub sector_density: f32,
+    /// Average Density of Resources in the Galaxy.
+    pub resource_density: f32,
+}

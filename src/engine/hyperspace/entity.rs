@@ -16,9 +16,20 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+use crate::utility::hex::HexLocation;
+use bevy::prelude::*;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+/// Tag Denoting Hyperspace Object
+pub struct Hyperspace;
+
+/// Info about Hyperspace Gravity Well
+pub struct HyperspaceSectorInfo {
+    /// Integer Sector Location
+    pub location: HexLocation,
+    /// Cartesian Position
+    pub position: Vec2,
+    /// Primary Radius
+    pub primary_radius: f32,
+    /// Primary Color
+    pub primary_color: Color,
+}

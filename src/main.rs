@@ -22,13 +22,14 @@
 #![allow(unused_imports)]
 #![allow(unused_variables)]
 #![allow(dead_code)]
+#![allow(unused_mut)]
 
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::log::{LogPlugin, LogSettings};
 use bevy::prelude::*;
 
 mod common;
-mod mode;
+mod engine;
 mod plugin;
 mod utility;
 
@@ -51,114 +52,117 @@ fn main() {
             ..Default::default()
         })
         // Load the Assets
-        .add_startup_system(common::asset_loader.system())
-        .add_startup_system(common::create_cameras.system())
-        .add_startup_system(common::music_player.system())
-        // Then go to the main menu
-        .add_state(mode::GameState::MainMenu)
+        .add_startup_system(engine::mainmenu::initialize_mainmenu.system())
+        .add_startup_system(engine::hyperspace::initialize_hyperspace.system())
+        .add_startup_system(engine::sectorspace::initialize_sectorspace.system())
+        .add_startup_system(engine::tilespace::initialize_tilespace.system())
+        .add_startup_system(engine::cyberspace::initialize_cyberspace.system())
+        .add_startup_system(engine::pausemenu::initialize_pausemenu.system())
+        // Then go to the main mainmenu
+        .add_state(engine::GameState::MainMenu)
         // Main Menu States
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::MainMenu)
-                .with_system(mode::menu::setup_mainmenu.system()),
+            SystemSet::on_enter(engine::GameState::MainMenu)
+                .with_system(engine::mainmenu::setup_mainmenu.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::MainMenu)
-                .with_system(mode::menu::update_mainmenu.system())
-                //.with_system(mode::menu::process_gamepad_input.system())
-                //.with_system(mode::menu::process_keyboard_input.system())
-                //.with_system(mode::menu::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::MainMenu)
+                .with_system(engine::mainmenu::update_mainmenu.system())
+                //.with_system(engine::mainmenu::process_gamepad_input.system())
+                //.with_system(engine::mainmenu::process_keyboard_input.system())
+                //.with_system(engine::mainmenu::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::MainMenu)
-                .with_system(mode::menu::cleanup_mainmenu.system()),
+            SystemSet::on_exit(engine::GameState::MainMenu)
+                .with_system(engine::mainmenu::cleanup_mainmenu.system()),
         )
         // WorldGen States
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::WorldGen)
-                .with_system(mode::worldgen::setup_worldgen.system()),
+            SystemSet::on_enter(engine::GameState::WorldGen)
+                .with_system(engine::worldgen::setup_worldgen.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::WorldGen)
-                .with_system(mode::worldgen::update_worldgen.system()),
+            SystemSet::on_update(engine::GameState::WorldGen)
+                .with_system(engine::worldgen::update_worldgen.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::WorldGen)
-                .with_system(mode::worldgen::cleanup_worldgen.system()),
+            SystemSet::on_exit(engine::GameState::WorldGen)
+                .with_system(engine::worldgen::cleanup_worldgen.system()),
         )
         // Ground Travel State
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::TilespaceMode)
-                .with_system(mode::tilespace::setup_tilespace.system()),
+            SystemSet::on_enter(engine::GameState::TilespaceMode)
+                .with_system(engine::tilespace::setup_tilespace.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::TilespaceMode)
-                .with_system(mode::tilespace::process_gamepad_input.system())
-                .with_system(mode::tilespace::process_keyboard_input.system())
-                .with_system(mode::tilespace::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::TilespaceMode)
+                .with_system(engine::tilespace::process_gamepad_input.system())
+                .with_system(engine::tilespace::process_keyboard_input.system())
+                .with_system(engine::tilespace::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::TilespaceMode)
-                .with_system(mode::tilespace::cleanup_tilespace.system()),
+            SystemSet::on_exit(engine::GameState::TilespaceMode)
+                .with_system(engine::tilespace::cleanup_tilespace.system()),
         )
         // Sector Flight Travel States
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::SectorspaceMode)
-                .with_system(mode::sectorspace::setup_sectorspace.system()),
+            SystemSet::on_enter(engine::GameState::SectorspaceMode)
+                .with_system(engine::sectorspace::setup_sectorspace.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::SectorspaceMode)
-                .with_system(mode::sectorspace::process_gamepad_input.system())
-                .with_system(mode::sectorspace::process_keyboard_input.system())
-                .with_system(mode::sectorspace::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::SectorspaceMode)
+                .with_system(engine::sectorspace::process_gamepad_input.system())
+                .with_system(engine::sectorspace::process_keyboard_input.system())
+                .with_system(engine::sectorspace::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::SectorspaceMode)
-                .with_system(mode::sectorspace::setup_sectorspace.system()),
+            SystemSet::on_exit(engine::GameState::SectorspaceMode)
+                .with_system(engine::sectorspace::setup_sectorspace.system()),
         )
         // Hyperspace Travel State
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::HyperspaceMode)
-                .with_system(mode::hyperspace::setup_hyperspace.system()),
+            SystemSet::on_enter(engine::GameState::HyperspaceMode)
+                .with_system(engine::hyperspace::setup_hyperspace.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::HyperspaceMode)
-                .with_system(mode::hyperspace::process_gamepad_input.system())
-                .with_system(mode::hyperspace::process_keyboard_input.system())
-                .with_system(mode::hyperspace::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::HyperspaceMode)
+                .with_system(engine::hyperspace::process_gamepad_input.system())
+                .with_system(engine::hyperspace::process_keyboard_input.system())
+                .with_system(engine::hyperspace::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::HyperspaceMode)
-                .with_system(mode::hyperspace::cleanup_hyperspace.system()),
+            SystemSet::on_exit(engine::GameState::HyperspaceMode)
+                .with_system(engine::hyperspace::cleanup_hyperspace.system()),
         )
         // Cyberspace Travel State
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::CyberspaceMode)
-                .with_system(mode::cyberspace::setup_cyberspace.system()),
+            SystemSet::on_enter(engine::GameState::CyberspaceMode)
+                .with_system(engine::cyberspace::setup_cyberspace.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::CyberspaceMode)
-                .with_system(mode::cyberspace::process_gamepad_input.system())
-                .with_system(mode::cyberspace::process_keyboard_input.system())
-                .with_system(mode::cyberspace::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::CyberspaceMode)
+                .with_system(engine::cyberspace::process_gamepad_input.system())
+                .with_system(engine::cyberspace::process_keyboard_input.system())
+                .with_system(engine::cyberspace::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::CyberspaceMode)
-                .with_system(mode::cyberspace::cleanup_cyberspace.system()),
+            SystemSet::on_exit(engine::GameState::CyberspaceMode)
+                .with_system(engine::cyberspace::cleanup_cyberspace.system()),
         )
         // Pause Menu States
         .add_system_set(
-            SystemSet::on_enter(mode::GameState::PauseMenu)
-                .with_system(mode::menu::setup_mainmenu.system()),
+            SystemSet::on_enter(engine::GameState::PauseMenu)
+                .with_system(engine::pausemenu::setup_pausemenu.system()),
         )
         .add_system_set(
-            SystemSet::on_update(mode::GameState::PauseMenu)
-                .with_system(mode::menu::process_gamepad_input.system())
-                .with_system(mode::menu::process_keyboard_input.system())
-                .with_system(mode::menu::process_mouse_input.system()),
+            SystemSet::on_update(engine::GameState::PauseMenu)
+                .with_system(engine::pausemenu::process_gamepad_input.system())
+                .with_system(engine::pausemenu::process_keyboard_input.system())
+                .with_system(engine::pausemenu::process_mouse_input.system()),
         )
         .add_system_set(
-            SystemSet::on_exit(mode::GameState::PauseMenu)
-                .with_system(mode::menu::setup_pausemenu.system()),
+            SystemSet::on_exit(engine::GameState::PauseMenu)
+                .with_system(engine::pausemenu::setup_pausemenu.system()),
         )
         .run();
 }

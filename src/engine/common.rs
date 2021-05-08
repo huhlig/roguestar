@@ -16,9 +16,5 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
-
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+/// Player Tag
+pub struct PlayerAvatar;

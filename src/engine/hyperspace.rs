@@ -16,9 +16,12 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+//! Hyperspace is the main method between sectors with Gravity Wells.
+mod entity;
+mod input;
+mod setup;
 
-pub use self::dice::Dice;
-pub use self::texgen::CloudTextureGenerator;
+pub use self::entity::{Hyperspace, HyperspaceSectorInfo};
+pub use self::input::{process_gamepad_input, process_keyboard_input, process_mouse_input};
+pub use self::setup::{cleanup_hyperspace, initialize_hyperspace, setup_hyperspace, update_hyperspace};
+use super::WorldClock;
