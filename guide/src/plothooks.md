@@ -20,4 +20,22 @@ Start off with some money and a scout ship.
 
 ### Merchant Start
 
-Start aboard a merchant ship as a deckhand, do a bunch of tasks, 
+Start aboard a merchant ship as a deckhand, do a bunch of tasks,
+
+## Quests
+
+### Escort
+
+Escort an NPC from A to B.
+
+### Transport
+
+Take on cargo/passengers from A to B. 
+
+### Cartography
+
+Map an area.
+
+### Cataloging
+
+Scan/record information about resources/animals.

@@ -38,29 +38,25 @@ impl CloudTextureGenerator {
             noise5: OpenSimplex::new().set_seed(seed ^ 2100345001),
         }
     }
-    pub fn texture(&mut self, width: usize, height: usize, frame: usize, base: bool) -> Texture {
+    pub fn texture(&mut self, width: usize, height: usize, frame: usize) -> Texture {
         let mut data = Vec::with_capacity(width * height * 4);
         for x in 0..width {
             for y in 0..height {
                 let nx = x as f64 / (width as f64 * 0.1);
-                let ny = y as f64 / (height as f64 * 0.1);
-                let nz = frame as f64;
+                let ny = y as f64 / (width as f64 * 0.1);
+                let nz = frame as f64 * 0.1;
                 let e
-                    = 16.0 * (self.noise1.get([01.0 * nx, 01.0 * ny, 01.0 * nz]) + 1.0) / 2.0
-                    + 08.0 * (self.noise2.get([02.0 * nx, 02.0 * ny, 02.0 * nz]) + 1.0) / 2.0
-                    + 04.0 * (self.noise3.get([04.0 * nx, 04.0 * ny, 04.0 * nz]) + 1.0) / 2.0
-                    + 02.0 * (self.noise4.get([08.0 * nx, 08.0 * ny, 08.0 * nz]) + 1.0) / 2.0
-                    + 01.0 * (self.noise5.get([16.0 * nx, 16.0 * ny, 16.0 * nz]) + 1.0) / 2.0;
-                let val = ((e / 31.0) * 256.0) as u8;
+                    = 16.0 * (self.noise1.get([01.0 * nx, 01.0 * ny, 01.0 * nz]) + 1.0)
+                    + 08.0 * (self.noise2.get([02.0 * nx, 02.0 * ny, 02.0 * nz]) + 1.0)
+                    + 04.0 * (self.noise3.get([04.0 * nx, 04.0 * ny, 04.0 * nz]) + 1.0)
+                    + 02.0 * (self.noise4.get([08.0 * nx, 08.0 * ny, 08.0 * nz]) + 1.0)
+                    + 01.0 * (self.noise5.get([16.0 * nx, 16.0 * ny, 16.0 * nz]) + 1.0);
+                let val = ((e / 64.0) * 255.0) as u8;
                 //trace!("{},{} => {} -> {}", x, y, e, val);
                 data.push(val);
                 data.push(0);
                 data.push(0);
-                if base {
-                    data.push(255);
-                } else {
-                    data.push(val);
-                }
+                data.push(val);
             }
         }
         Texture::new(
@@ -72,86 +68,27 @@ impl CloudTextureGenerator {
     }
 }
 
-/*
-pub fn hyperspace_texture(width: usize, height: usize, layer: u8, frame: u8) -> Texture {
-    use noise::{Add, NoiseFn, Perlin, OpenSimplex, ScaleBias, ScalePoint};
-    let noise = OpenSimplex::new();
+#[cfg(test)]
+mod tests {
+    use super::CloudTextureGenerator;
+    use std::path::Path;
+    use std::fs::File;
+    use std::io::BufWriter;
 
-    let noise1 = ScaleBias::new(&ScalePoint::new(Perlin::new())
-        .set_all_scales(01.0, 01.0, 01.0, 01.0)).set_scale(16.0);
-    let noise2 = ScaleBias::new(&ScalePoint::new(Perlin::new())
-        .set_all_scales(02.0, 02.0, 02.0, 02.0)).set_scale(08.0);
-    let noise3 = ScaleBias::new(&ScalePoint::new(Perlin::new())
-        .set_all_scales(04.0, 04.0, 04.0, 04.0)).set_scale(04.0);
-    let noise4 = ScaleBias::new(&ScalePoint::new(Perlin::new())
-        .set_all_scales(08.0, 08.0, 08.0, 08.0)).set_scale(02.0);
-    let noise4 = ScaleBias::new(&ScalePoint::new(Perlin::new())
-        .set_all_scales(16.0, 16.0, 16.0, 16.0)).set_scale(01.0);
+    #[test]
+    fn test_texture() {
+        const WIDTH: usize = 1024;
+        const HEIGHT: usize = 768;
+        let path = Path::new(r"target/perlin_test.png");
+        let file = File::create(path).unwrap();
+        let ref mut w = BufWriter::new(file);
 
-    let e
-        = 16.0 * noise1(x, y)
-        + 08.0 * noise2(2 * x, 2 * y)
-        + 04.0 * noise3(4 * x, 4 * y)
-        + 02.0 * noise4(8 * x, 8 * y)
-        + 01.0 * noise5(16 * x, 16 * y);
+        let mut encoder = png::Encoder::new(w, WIDTH as u32, HEIGHT as u32);
+        encoder.set_color(png::ColorType::RGBA);
+        encoder.set_depth(png::BitDepth::Eight);
+        let mut writer = encoder.write_header().unwrap();
 
-
-    // Compile a list of animated textures
-
-    let y_scale = 0.05;
-    let x_scale = y_scale * (height as f64 / width as f64);
-    let mut data = Vec::new();
-    for x in 0..width {
-        for y in 0..height {
-            let nx = x as f64;
-            let ny = y as f64;
-            let e// Noise Equation 
-                = 1.00 * noise.get([1.0 * nx, 1.0 * ny])
-                + 0.50 * noise.get([2.0 * nx, 2.0 * ny])
-                + 0.25 * noise.get([4.0 * nx, 4.0 * ny]);
-            let val = ((e / (1.0 + 0.5 + 0.25)) * 128.0 + 128.0) as u8;
-            //trace!("({},{}) - {}", nx, ny, val);
-            // Push In R, G, B, A Channels
-            data.push(val);
-            data.push(0);
-            data.push(0);
-            data.push(255);
-        }
+        let texture = CloudTextureGenerator::new(0).texture(WIDTH, HEIGHT, 0);
+        writer.write_image_data(&texture.data).unwrap();
     }
-    Texture::new(
-        Extent3d::new(width as u32, height as u32, 1),
-        TextureDimension::D2,
-        data,
-        TextureFormat::Rgba8UnormSrgb,
-    )
 }
-
-pub fn hypospace_texture(width: usize, height: usize, frames: u8) -> Vec<Texture> {
-    use noise::{NoiseFn, Perlin};
-    let perlin = Perlin::new();
-
-    // Compile a list of animated textures
-    let mut textures = Vec::with_capacity(frames as usize);
-    for t in 0..frames {
-        let mut data = Vec::new();
-        for x in 0..width {
-            for y in 0..height {
-                let val =
-                    (perlin.get([x as f64, y as f64, t as f64 / frames as f64]) * 255.0) as u8;
-                // Push In R, G, B, A Channels
-                data.push(0);
-                data.push(val);
-                data.push(val);
-                data.push(val);
-            }
-        }
-        textures.push(Texture::new(
-            Extent3d::new(width as u32, height as u32, 1),
-            TextureDimension::D2,
-            data,
-            TextureFormat::Rgba8Uint,
-        ));
-    }
-    textures
-}
-*/

@@ -28,3 +28,6 @@ branch = "master"
 
 [dependencies.nominae]
 git = "https://github.com/huhlig/nominae-rs.git"
+
+[dev-dependencies.png]
+version = "0.16"

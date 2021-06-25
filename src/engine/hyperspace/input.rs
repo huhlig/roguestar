@@ -22,12 +22,13 @@ use bevy::prelude::*;
 use bevy::render::camera::Camera;
 
 use super::Hyperspace;
+use crate::engine::PlayerAvatar;
 
 const ZOOM_SCALE: f32 = 0.9;
 const MOVE_SCALE: f32 = 1.0;
 
 pub fn process_keyboard_input(
-    mut query: Query<(&Camera, &mut Transform), With<Hyperspace>>,
+    mut query: Query<(&PlayerAvatar, &mut Transform), With<Hyperspace>>,
     mut keyboard_input_events: EventReader<KeyboardInput>,
 ) {
     for event in keyboard_input_events.iter() {

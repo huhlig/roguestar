@@ -51,6 +51,7 @@ fn main() {
             resizable: false,
             ..Default::default()
         })
+        .insert_resource(ClearColor(Color::rgb(0.04, 0.04, 0.04)))
         // Load the Assets
         .add_startup_system(engine::mainmenu::initialize_mainmenu.system())
         .add_startup_system(engine::hyperspace::initialize_hyperspace.system())

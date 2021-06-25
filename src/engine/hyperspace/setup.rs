@@ -25,13 +25,18 @@ pub fn initialize_hyperspace(
     mut commands: Commands,
     mut textures: ResMut<Assets<Texture>>,
     mut materials: ResMut<Assets<ColorMaterial>>,
+    mut texture_atlases: ResMut<Assets<TextureAtlas>>,
     windows: Res<Windows>,
     asset_server: Res<AssetServer>,
 ) {
+    let texture_handle = asset_server.load("sprites/ships/Ship-001.png");
+    let texture_atlas = TextureAtlas::from_grid(texture_handle, Vec2::new(32.0, 32.0), 6, 6);
+    let texture_atlas_handle = texture_atlases.add(texture_atlas);
     // Create Camera, Ship and background
     commands
-        .spawn_bundle(SpriteBundle {
-            material: materials.add(asset_server.load("sprites/ships/Ship-001.png").into()),
+        .spawn_bundle(SpriteSheetBundle {
+            texture_atlas: texture_atlas_handle,
+            transform: Transform::from_xyz(0.0, 0.0, 0.0),
             ..Default::default()
         })
         .insert(PlayerAvatar)
@@ -39,7 +44,7 @@ pub fn initialize_hyperspace(
         .with_children(|parent| {
             let mut camera_bundle = OrthographicCameraBundle::new_2d();
             let window = windows.get(camera_bundle.camera.window).unwrap();
-            camera_bundle.transform = Transform::from_xyz(0.0, 0.0, -10.0);
+            camera_bundle.transform = Transform::from_xyz(0.0, 0.0, 10.0);
             parent
                 .spawn_bundle(camera_bundle)
                 .insert(Hyperspace);
@@ -48,7 +53,6 @@ pub fn initialize_hyperspace(
                 window.width() as usize,
                 window.height() as usize,
                 0,
-                true,
             );
             parent
                 // Spawn Hyperspace Background
@@ -66,7 +70,7 @@ pub fn initialize_hyperspace(
                         flip_y: false,
                         resize_mode: SpriteResizeMode::Automatic,
                     },
-                    transform: Transform::from_xyz(0.0, 0.0, -999.0),
+                    transform: Transform::from_xyz(0.0, 0.0, -500.0),
                     ..Default::default()
                 })
                 .insert(Hyperspace);
@@ -77,8 +81,6 @@ pub fn setup_hyperspace(
     mut commands: Commands,
     mut hyperspace_query: Query<&mut Visible, With<Hyperspace>>,
     mut camera_query: Query<(Entity, &Camera, &mut Transform), With<Hyperspace>>,
-
-
 ) {
     trace!("Setup Hyperspace");
 

@@ -42,6 +42,7 @@ impl HexLayout {
     }
     pub fn to_cartesian(&self, hex: HexPosition) -> Vec2 {
         // TODO: Convert to const when https://github.com/rust-lang/rust/issues/57241 is complete.
+        #![allow(non_snake_case)]
         /* const */ let  FLAT_FORWARD: Mat2 =
             Mat2::from_cols_array_2d(&[[f32::sqrt(3.0) / 3.0, 0.0], [-1.0 / 3.0, 2.0 / 3.0]]);
         match *self {
