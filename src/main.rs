@@ -24,6 +24,7 @@
 #![allow(dead_code)]
 #![allow(unused_mut)]
 
+use crate::plugin::parallax::ParallaxBackgroundPlugin;
 use bevy::diagnostic::{FrameTimeDiagnosticsPlugin, LogDiagnosticsPlugin};
 use bevy::log::{LogPlugin, LogSettings};
 use bevy::prelude::*;
@@ -41,6 +42,7 @@ fn main() {
     );
     App::build()
         .add_plugins(DefaultPlugins)
+        .add_plugin(ParallaxBackgroundPlugin)
         .add_plugin(FrameTimeDiagnosticsPlugin)
         .add_plugin(LogDiagnosticsPlugin::default())
         .insert_resource(WindowDescriptor {
