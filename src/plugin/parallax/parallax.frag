@@ -10,10 +10,10 @@ layout(set = 1, binding = 0) uniform ColorMaterial_color {
 };
 
 layout(set = 1, binding = 1) uniform texture2D ColorMaterial_texture;
-layout(set = 1, binding = 2) uniform sampler2D ColorMaterial_texture_sampler;
+layout(set = 1, binding = 2) uniform sampler ColorMaterial_texture_sampler;
 
 void main() {
     vec4 color = Color;
-    color *= texture2D(sampler2D(ColorMaterial_texture, ColorMaterial_texture_sampler), v_Uv);
+    color *= texture(sampler2D(ColorMaterial_texture, ColorMaterial_texture_sampler), v_Uv);
     o_Target = color;
 }

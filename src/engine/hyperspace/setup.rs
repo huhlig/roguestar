@@ -21,6 +21,7 @@ use crate::engine::PlayerAvatar;
 use crate::plugin::parallax::ParallaxBackgroundBundle;
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
+use bevy::render::texture::AddressMode;
 
 pub fn initialize_hyperspace(
     mut commands: Commands,
@@ -48,15 +49,50 @@ pub fn initialize_hyperspace(
             camera_bundle.transform = Transform::from_xyz(0.0, 0.0, 10.0);
             parent.spawn_bundle(camera_bundle).insert(Hyperspace);
 
-            let hyperspace_background_texture = crate::utility::texgen::CloudTextureGenerator::new(
-                0,
-            )
-            .texture(window.width() as usize, window.height() as usize, 0);
+            let bg1: Handle<Texture> = asset_server.load("backgrounds/title/bg1.png");
+            textures
+                .get_mut(bg1.clone())
+                .unwrap() // We got none here... why
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            let bg2: Handle<Texture> = asset_server.load("backgrounds/title/bg2.png");
+            textures
+                .get_mut(bg2.clone())
+                .unwrap()
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            let bg3: Handle<Texture> = asset_server.load("backgrounds/title/bg3.png");
+            textures
+                .get_mut(bg3.clone())
+                .unwrap()
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            let bg4: Handle<Texture> = asset_server.load("backgrounds/title/bg4.png");
+            textures
+                .get_mut(bg4.clone())
+                .unwrap()
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            let bg5: Handle<Texture> = asset_server.load("backgrounds/title/bg5.png");
+            textures
+                .get_mut(bg5.clone())
+                .unwrap()
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            let bg6: Handle<Texture> = asset_server.load("backgrounds/title/bg6.png");
+            textures
+                .get_mut(bg6.clone())
+                .unwrap()
+                .sampler
+                .set_address_mode(AddressMode::Repeat);
+            // let hyperspace_background_texture = crate::utility::texgen::CloudTextureGenerator::new(0)
+            // .texture(window.width() as usize, window.height() as usize, 0);
+
             // Spawn Hyperspace Background
             parent
                 .spawn_bundle(ParallaxBackgroundBundle {
-                    material: asset_server.load("backgrounds/title/bg1.png"),
-                    transform: Transform::from_xyz(0.0, 0.0, -500.0),
+                    material: materials.add(ColorMaterial::texture(bg1)),
+                    transform: Transform::from_xyz(0.0, 0.0, -1000.0),
                     visible: Visible {
                         is_visible: false,
                         is_transparent: false,
@@ -66,8 +102,52 @@ pub fn initialize_hyperspace(
                 .insert(Hyperspace);
             parent
                 .spawn_bundle(ParallaxBackgroundBundle {
-                    material: asset_server.load("backgrounds/title/bg2.png"),
+                    material: materials.add(ColorMaterial::texture(bg2)),
+                    transform: Transform::from_xyz(0.0, 0.0, -800.0),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                })
+                .insert(Hyperspace);
+            parent
+                .spawn_bundle(ParallaxBackgroundBundle {
+                    material: materials.add(ColorMaterial::texture(bg3)),
                     transform: Transform::from_xyz(0.0, 0.0, -600.0),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                })
+                .insert(Hyperspace);
+            parent
+                .spawn_bundle(ParallaxBackgroundBundle {
+                    material: materials.add(ColorMaterial::texture(bg4)),
+                    transform: Transform::from_xyz(0.0, 0.0, -400.0),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                })
+                .insert(Hyperspace);
+            parent
+                .spawn_bundle(ParallaxBackgroundBundle {
+                    material: materials.add(ColorMaterial::texture(bg5)),
+                    transform: Transform::from_xyz(0.0, 0.0, -200.0),
+                    visible: Visible {
+                        is_visible: false,
+                        is_transparent: false,
+                    },
+                    ..Default::default()
+                })
+                .insert(Hyperspace);
+            parent
+                .spawn_bundle(ParallaxBackgroundBundle {
+                    material: materials.add(ColorMaterial::texture(bg6)),
+                    transform: Transform::from_xyz(0.0, 0.0, -100.0),
                     visible: Visible {
                         is_visible: false,
                         is_transparent: false,
