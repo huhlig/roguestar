@@ -16,12 +16,12 @@
 
 use rand::Rng;
 
-/// Dice Exteension to [Rng](rand::Rng)
+/// Dice Extension to [Rng](rand::Rng)
 pub trait Dice: rand::Rng {
-    /// Roll `count` dice with `pips` and count the total above `target`.
-    fn roll_target(&mut self, count: usize, pips: usize, target: usize) -> usize {
+    /// Roll `count` dice with `sides` and count the total above `target`.
+    fn roll_target(&mut self, count: usize, sides: usize, target: usize) -> usize {
         (0..count)
-            .map(|_| self.gen_range(1..pips))
+            .map(|_| self.gen_range(1..sides))
             .filter(|v| *v >= target)
             .count()
     }

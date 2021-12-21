@@ -17,8 +17,11 @@
 //
 
 mod dice;
-pub mod hex;
-pub(crate) mod texgen;
+mod poisson;
+mod texgen;
+mod worldclock;
 
 pub use self::dice::Dice;
+pub use self::poisson::PoissonDiscSampler;
 pub use self::texgen::CloudTextureGenerator;
+pub use self::worldclock::{world_clock_update, WorldClock};

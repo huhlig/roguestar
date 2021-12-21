@@ -16,11 +16,11 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-use crate::utility::hex::HexLocation;
 use bevy::prelude::*;
+use hexgrid::Coordinate;
 
 /// SectorSpace Tag with Sector Hex Location
-pub struct SectorSpace(pub HexLocation);
+pub struct SectorSpace(pub Coordinate<i32>);
 
 /// Star Information
 pub struct StarInfo {

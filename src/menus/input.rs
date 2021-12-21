@@ -25,7 +25,14 @@ use bevy::input::{
 use bevy::window::CursorMoved;
 
 /// Process Gamepad Input
-pub fn process_gamepad_input(mut gamepad_event: EventReader<GamepadEvent>) {
+pub fn process_input(
+    mut gamepad_event: EventReader<GamepadEvent>,
+    mut keyboard_input_events: EventReader<KeyboardInput>,
+    mut mouse_motion_events: EventReader<MouseMotion>,
+    mut cursor_moved_events: EventReader<CursorMoved>,
+    mut mouse_wheel_events: EventReader<MouseWheel>,
+    mut mouse_button_input_events: EventReader<MouseButtonInput>,
+) {
     for event in gamepad_event.iter() {
         match &event {
             GamepadEvent(gamepad, GamepadEventType::Connected) => {
@@ -42,20 +49,9 @@ pub fn process_gamepad_input(mut gamepad_event: EventReader<GamepadEvent>) {
             }
         }
     }
-}
-
-pub fn process_keyboard_input(mut keyboard_input_events: EventReader<KeyboardInput>) {
     for event in keyboard_input_events.iter() {
         println!("{:?}", event);
     }
-}
-
-pub fn process_mouse_input(
-    mut mouse_motion_events: EventReader<MouseMotion>,
-    mut cursor_moved_events: EventReader<CursorMoved>,
-    mut mouse_wheel_events: EventReader<MouseWheel>,
-    mut mouse_button_input_events: EventReader<MouseButtonInput>,
-) {
     for event in mouse_button_input_events.iter() {
         println!("{:?}", event);
     }

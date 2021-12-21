@@ -18,7 +18,7 @@
 
 use super::Hyperspace;
 use crate::engine::PlayerAvatar;
-use crate::plugin::parallax::ParallaxBackgroundBundle;
+//use crate::plugin::parallax::ParallaxBackgroundBundle;
 use bevy::prelude::*;
 use bevy::render::camera::Camera;
 use bevy::render::texture::AddressMode;

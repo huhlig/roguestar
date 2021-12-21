@@ -16,133 +16,328 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-use super::Parameters;
-use crate::engine::hyperspace::*;
-use crate::engine::sectorspace::*;
-use crate::utility::hex::{HexLayout, HexLocation, HexPosition};
+use super::{GenerationConfiguration, GenerationContext};
 use bevy::prelude::*;
+use hexgrid::{Coordinate, Position, Spacing};
 use rand::{Rng, SeedableRng};
 use rand_xoshiro::Xoshiro128PlusPlus;
+use tracing::trace;
 
-pub fn generate_sector(commands: &mut Commands, parameters: &Parameters, location: HexLocation) {
-    let sector_seed = parameters.seed ^ ((location.q() as u64) << 32 | (location.r() as u64) << 0);
-    let sector_distance = location.length();
-    let mut rng = rand_xoshiro::Xoshiro128PlusPlus::seed_from_u64(sector_seed);
-
-    // Todo: Make this more complex
-    if rng.gen_range(0.0..1.0) > 0.20 {
-        // Sector is empty
-        return;
-    }
-    let sector_name = format!(
-        "{} {}",
-        nominae::Totro::generate(3, 8, &mut rng),
-        sector_distance
-    );
-    let position = HexLayout::pointy(Vec2::new(0.0, 0.0), Vec2::new(100.0, 100.0))
-        .to_cartesian(HexPosition::from(&location));
-    let stellar_type = &STELLAR_TYPE[rng.gen_range(0..STELLAR_TYPE.len())];
-    let primary_info = crate::engine::sectorspace::StarInfo {
-        name: "".to_string(),
-        mass: stellar_type.mass,
-        luminosity: stellar_type.luminosity,
-        radius: stellar_type.radius,
-        temp: stellar_type.temp,
-        color: stellar_type.color.clone(),
-    };
-    // Create Hyperspace Information
-    commands
-        .spawn()
-        .insert(Hyperspace)
-        .insert(HyperspaceSectorInfo {
-            location,
-            position,
-            primary_radius: primary_info.radius,
-            primary_color: primary_info.color.clone(),
-        });
-    let planet_count = rng.gen_range(0..15);
-    let mut primary_children = Vec::with_capacity(planet_count);
-    let mut distance_from_primary = &primary_info.radius * 2.0;
-    let primary_entity = commands
-        .spawn()
-        .insert(SectorSpace(location))
-        .insert(primary_info)
-        .id();
-    for planet_orbit in 0..planet_count {
-        distance_from_primary += rng.gen_range(20.0..200.0);
-        let planet_radius = rng.gen_range(2.0..10.0);
-        // TODO: Make temeprature a function of distance from star
-        let planet_temperature = rng.gen_range(-200.0..300.0);
-        // TODO: Make this based on Temperature
-        let planet_foliage = rng.gen_range(0.0..1.0);
-        let planet_minerals = rng.gen_range(0.0..1.0);
-        let planet_water = rng.gen_range(0.0..1.0);
-        let planet_gases = rng.gen_range(0.0..1.0);
-        let feature_sum = 1.0 / (planet_foliage + planet_minerals + planet_water + planet_gases);
-        // TODO: Make population based on habitat properties
-        let planet_population = f32::max(0.0, rng.gen_range(-5000000.0..20000000.0));
-        // Construct PlanetInfo
-        let planet_info = PlanetInfo {
-            name: "".to_string(),
-            radius: planet_radius,
-            temperature: planet_temperature,
-            foliage: planet_foliage * feature_sum,
-            minerals: planet_minerals * feature_sum,
-            water: planet_water * feature_sum,
-            gases: planet_gases * feature_sum,
-            population: planet_population,
-            ring: rng.gen_range(0.0..1.0) < 0.10,
-        };
-        let moon_count = i32::max(0, rng.gen_range(-5..5)) as usize;
-        let mut planet_children = Vec::with_capacity(moon_count);
-        let mut distance_from_planet = planet_info.radius * 2.0;
-        let planet_entity = commands
-            .spawn()
-            .insert(planet_info)
-            .insert(OrbitalParent::from(primary_entity))
-            .insert(OrbitalPosition::default())
-            .insert(OrbitalParameters {
-                distance: distance_from_primary,
-                period: planet_orbit as f32 * rng.gen_range(1.0..60.0),
-            })
-            .id();
-        for moon_orbit in 0..moon_count {
-            distance_from_planet += rng.gen_range(1.0..5.0);
-            // TODO: Make Moon Generation better
-            let moon_info = PlanetInfo {
-                name: "".to_string(),
-                radius: rng.gen_range(1.0..5.0),
-                temperature: 0.0,
-                foliage: 0.0,
-                minerals: 0.0,
-                water: 0.0,
-                gases: 0.0,
-                population: 0.0,
-                ring: false,
-            };
-            let moon_entity = commands
-                .spawn()
-                .insert(moon_info)
-                .insert(OrbitalParent::from(planet_entity))
-                .insert(OrbitalPosition::default())
-                .insert(OrbitalParameters {
-                    distance: distance_from_planet,
-                    // TODO: Make this based on location
-                    period: moon_orbit as f32 * rng.gen_range(1.0..60.0),
-                })
-                .id();
-            planet_children.push(moon_entity)
-        }
-        commands
-            .entity(planet_entity)
-            .insert(OrbitalChildren(planet_children));
-    }
-    commands
-        .entity(primary_entity)
-        .insert(OrbitalChildren(primary_children));
+#[derive(Clone, Debug)]
+pub struct ProtoCluster {
+    /// Cluster ID
+    pub id: usize,
+    /// Name of Cluster
+    pub name: String,
+    /// Center of Cluster
+    pub center: Coordinate<i32>,
+    /// Radius of Cluster
+    pub radius: i32,
+    /// Sectors in Cluster
+    pub sectors: Vec<ProtoSector>,
+    /// Entity Assigned
+    pub entity: Option<Entity>,
 }
 
+#[derive(Clone, Debug)]
+pub struct ProtoSector {
+    /// Sector ID
+    pub id: usize,
+    /// Cluster ID
+    pub cluster: usize,
+    /// Sector Name
+    pub name: String,
+    /// Sector Designation
+    pub designation: String,
+    /// Sector Location
+    pub location: Coordinate<i32>,
+    /// Sector Position
+    pub position: Position<f32>,
+}
+
+#[derive(Clone, Debug)]
+pub struct ProtoOrbital {
+    /// Orbital ID
+    id: usize,
+    /// Orbital Parent ID
+    parent: Option<usize>,
+    /// Orbital Radius from parent
+    radius: f32,
+    /// Orbital Period in days
+    period: f32,
+    /// Entity
+    entity: Option<Entity>,
+    /// Orbital Data
+    data: OrbitalData,
+}
+
+#[derive(Clone, Debug)]
+pub enum OrbitalData {
+    BlackHole(BlackHoleData),
+    Star(StarData),
+    Planet(PlanetData),
+    Station(StationData),
+    Moon(MoonData),
+    Asteroid(AsteroidData),
+}
+
+#[derive(Clone, Debug)]
+pub struct BlackHoleData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    radius: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct StarData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    luminosity: f64,
+    radius: f64,
+    temp: f64,
+    color: Color,
+}
+
+#[derive(Clone, Debug)]
+pub struct PlanetData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    radius: f64,
+    temp: f64,
+    color: Color,
+}
+
+#[derive(Clone, Debug)]
+pub struct StationData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    radius: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct MoonData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    radius: f64,
+}
+
+#[derive(Clone, Debug)]
+pub struct AsteroidData {
+    designation: String,
+    name: Option<String>,
+    mass: f64,
+    radius: f64,
+}
+
+impl GenerationContext {
+    pub fn step_generate_cluster(&mut self, mut commands: Commands) -> bool {
+        for attempts in 0..100 {
+            let new_cluster = ProtoCluster {
+                id: self.clusters.len(),
+                center: Coordinate::from_pixel(
+                    self.random
+                        .gen_range(-self.config.universe_radius..self.config.universe_radius)
+                        as f32,
+                    self.random
+                        .gen_range(-self.config.universe_radius..self.config.universe_radius)
+                        as f32,
+                    Spacing::PointyTop(1.0),
+                ),
+                radius: self.random.gen_range(self.config.cluster_size.clone()),
+                name: nominae::Totro::generate(3, 12, &mut self.random),
+                sectors: vec![],
+                entity: None,
+            };
+            println!("new_cluster: {:?}", new_cluster);
+            if self
+                .clusters
+                .iter()
+                .any(|old_cluster| cluster_overlap(old_cluster, &new_cluster))
+            {
+                // It's overlapping
+                println!("cluster overlaps");
+            } else {
+                println!("new_cluster: {:?}", &new_cluster);
+                self.clusters.push(new_cluster);
+                return false;
+            }
+        }
+        // We tried 100 times to create a new sector and failed.
+        // Need a better done method.
+        true
+    }
+    pub fn step_generate_sector(&mut self, mut commands: Commands, location: Coordinate<i32>) {
+        trace!("Generation of Sector {:?}", &location);
+
+        let sector_seed =
+            self.config.universe_seed ^ ((location.x as u64) << 32 | (location.y as u64) << 0);
+        let sector_distance = location.distance(Coordinate::default());
+        let sector_designation = if location.x > 0 && location.y > 0 {
+            format!("GSC-A{}-{}", location.x.abs(), location.y.abs()) // Alpha Quadrant
+        } else if location.x > 0 && location.y > 0 {
+            format!("B{}-{}", location.x.abs(), location.y.abs()) // Beta Quadrant
+        } else if location.x < 0 && location.y < 0 {
+            format!("G{}-{}", location.x.abs(), location.y.abs()) // Gamma Quadrant
+        } else if location.x < 0 && location.y < 0 {
+            format!("D{}-{}", location.x.abs(), location.y.abs()) // Delta Quadrant
+        } else {
+            format!("O-0") // Omega Sector - Center of galaxy
+        };
+        let mut rng = rand_xoshiro::Xoshiro128PlusPlus::seed_from_u64(sector_seed);
+        // Generate Sector Anchor
+        let anchor = match rng.gen_range(0..100) {
+            0..=90 => {
+                let stellar_class = &STELLAR_TYPE[rng.gen_range(0..STELLAR_TYPE.len())];
+                let star_data = StarData {
+                    designation: format!("{}-0", sector_designation),
+                    name: None,
+                    mass: 0.0,
+                    luminosity: 0.0,
+                    radius: 0.0,
+                    temp: 0.0,
+                    color: Default::default(),
+                };
+            }
+            90..=100 => {}
+            _ => panic!("Rolled outside expected range"),
+        };
+    }
+}
+
+#[inline]
+fn cluster_overlap(a: &ProtoCluster, b: &ProtoCluster) -> bool {
+    let distance = a.center.distance(b.center);
+    distance < a.radius && distance < b.radius
+}
 /*
+fn step_generate_sector<R: Rng>(
+    &mut self,
+    rng: &mut R,
+    commands: &mut Commands,
+    location: Coordinate<i32>,
+) -> bool {
+    let sector_seed =
+        self.config.universe_seed ^ ((location.q() as u64) << 32 | (location.r() as u64) << 0);
+    let sector_distance = location.length();
+    let mut rng = rand_xoshiro::Xoshiro128PlusPlus::seed_from_u64(sector_seed);
+           // Todo: Make this more complex
+           if rng.gen_range(0.0..1.0) > 0.20 {
+               // Sector is empty
+               return;
+           }
+           let sector_name = format!(
+               "{} {}",
+               nominae::Totro::generate(3, 8, &mut rng),
+               sector_distance
+           );
+           let position = location.to_pixel(Spacing::pointy_top(1.0));
+           let stellar_type = &STELLAR_TYPE[rng.gen_range(0..STELLAR_TYPE.len())];
+           let primary_info = StarInfo {
+               name: "".to_string(),
+               mass: stellar_type.mass,
+               luminosity: stellar_type.luminosity,
+               radius: stellar_type.radius,
+               temp: stellar_type.temp,
+               color: stellar_type.color.clone(),
+           };
+           // Create Hyperspace Information
+           commands
+               .spawn()
+               .insert(Hyperspace)
+               .insert(HyperspaceSectorInfo {
+                   location,
+                   position,
+                   primary_radius: primary_info.radius,
+                   primary_color: primary_info.color.clone(),
+               });
+           let planet_count = rng.gen_range(0..15);
+           let mut primary_children = Vec::with_capacity(planet_count);
+           let mut distance_from_primary = &primary_info.radius * 2.0;
+           let primary_entity = commands
+               .spawn()
+               .insert(SectorSpace(location))
+               .insert(primary_info)
+               .id();
+           for planet_orbit in 0..planet_count {
+               distance_from_primary += rng.gen_range(20.0..200.0);
+               let planet_radius = rng.gen_range(2.0..10.0);
+               // TODO: Make temeprature a function of distance from star
+               let planet_temperature = rng.gen_range(-200.0..300.0);
+               // TODO: Make this based on Temperature
+               let planet_foliage = rng.gen_range(0.0..1.0);
+               let planet_minerals = rng.gen_range(0.0..1.0);
+               let planet_water = rng.gen_range(0.0..1.0);
+               let planet_gases = rng.gen_range(0.0..1.0);
+               let feature_sum =
+                   1.0 / (planet_foliage + planet_minerals + planet_water + planet_gases);
+               // TODO: Make population based on habitat properties
+               let planet_population = f32::max(0.0, rng.gen_range(-5000000.0..20000000.0));
+               // Construct PlanetInfo
+               let planet_info = PlanetInfo {
+                   name: "".to_string(),
+                   radius: planet_radius,
+                   temperature: planet_temperature,
+                   foliage: planet_foliage * feature_sum,
+                   minerals: planet_minerals * feature_sum,
+                   water: planet_water * feature_sum,
+                   gases: planet_gases * feature_sum,
+                   population: planet_population,
+                   ring: rng.gen_range(0.0..1.0) < 0.10,
+               };
+               let moon_count = i32::max(0, rng.gen_range(-5..5)) as usize;
+               let mut planet_children = Vec::with_capacity(moon_count);
+               let mut distance_from_planet = planet_info.radius * 2.0;
+               let planet_entity = commands
+                   .spawn()
+                   .insert(planet_info)
+                   .insert(OrbitalParent::from(primary_entity))
+                   .insert(OrbitalPosition::default())
+                   .insert(OrbitalParameters {
+                       distance: distance_from_primary,
+                       period: planet_orbit as f32 * rng.gen_range(1.0..60.0),
+                   })
+                   .id();
+               for moon_orbit in 0..moon_count {
+                   distance_from_planet += rng.gen_range(1.0..5.0);
+                   // TODO: Make Moon Generation better
+                   let moon_info = PlanetInfo {
+                       name: "".to_string(),
+                       radius: rng.gen_range(1.0..5.0),
+                       temperature: 0.0,
+                       foliage: 0.0,
+                       minerals: 0.0,
+                       water: 0.0,
+                       gases: 0.0,
+                       population: 0.0,
+                       ring: false,
+                   };
+                   let moon_entity = commands
+                       .spawn()
+                       .insert(moon_info)
+                       .insert(OrbitalParent::from(planet_entity))
+                       .insert(OrbitalPosition::default())
+                       .insert(OrbitalParameters {
+                           distance: distance_from_planet,
+                           // TODO: Make this based on location
+                           period: moon_orbit as f32 * rng.gen_range(1.0..60.0),
+                       })
+                       .id();
+                   planet_children.push(moon_entity)
+               }
+               commands
+                   .entity(planet_entity)
+                   .insert(OrbitalChildren(planet_children));
+           }
+           commands
+               .entity(primary_entity)
+               .insert(OrbitalChildren(primary_children));
+}
+
 /// Generate a star system using Gurps Space Rules
 pub fn generate_sector(mut commands: Commands, sector_coordinates: IVec2, seed: [u8; 32]) {
     let mut rng = Xoshiro256PlusPlus::from_seed(seed);
@@ -221,6 +416,7 @@ fn generate_companion_stellar_mass(rng: &mut XorShiftRng, primary_mass: f32) -> 
 }
 */
 
+#[derive(Debug)]
 struct StellarClass {
     name: &'static str,
     mass: f32,

@@ -18,7 +18,7 @@
 
 use bevy::prelude::*;
 use bevy::render::texture::{Extent3d, TextureDimension, TextureFormat};
-use noise::{OpenSimplex, Seedable, Perlin, NoiseFn};
+use noise::{NoiseFn, OpenSimplex, Perlin, Seedable};
 
 pub struct CloudTextureGenerator {
     noise1: OpenSimplex,
@@ -45,8 +45,7 @@ impl CloudTextureGenerator {
                 let nx = x as f64 / (width as f64 * 0.1);
                 let ny = y as f64 / (width as f64 * 0.1);
                 let nz = frame as f64 * 0.1;
-                let e
-                    = 16.0 * (self.noise1.get([01.0 * nx, 01.0 * ny, 01.0 * nz]) + 1.0)
+                let e = 16.0 * (self.noise1.get([01.0 * nx, 01.0 * ny, 01.0 * nz]) + 1.0)
                     + 08.0 * (self.noise2.get([02.0 * nx, 02.0 * ny, 02.0 * nz]) + 1.0)
                     + 04.0 * (self.noise3.get([04.0 * nx, 04.0 * ny, 04.0 * nz]) + 1.0)
                     + 02.0 * (self.noise4.get([08.0 * nx, 08.0 * ny, 08.0 * nz]) + 1.0)
@@ -71,9 +70,9 @@ impl CloudTextureGenerator {
 #[cfg(test)]
 mod tests {
     use super::CloudTextureGenerator;
-    use std::path::Path;
     use std::fs::File;
     use std::io::BufWriter;
+    use std::path::Path;
 
     #[test]
     fn test_texture() {
@@ -84,7 +83,7 @@ mod tests {
         let ref mut w = BufWriter::new(file);
 
         let mut encoder = png::Encoder::new(w, WIDTH as u32, HEIGHT as u32);
-        encoder.set_color(png::ColorType::RGBA);
+        encoder.set_color(png::ColorType::Rgba);
         encoder.set_depth(png::BitDepth::Eight);
         let mut writer = encoder.write_header().unwrap();
 

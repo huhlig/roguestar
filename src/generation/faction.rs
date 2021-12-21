@@ -14,11 +14,16 @@
 // limitations under the License.
 //
 
-use crate::factions::{FactionId, Factions};
-use crate::parameters::Parameters;
+use super::GenerationConfiguration;
+use super::GenerationContext;
+
+#[derive(Debug)]
+pub struct ProtoFaction {
+    name: String,
+}
 
 /// Generate Faction
-pub fn generate_government_faction(mut parameters: &Parameters, mut factions: &Factions) {}
+pub fn generate_government_faction(mut context: &GenerationContext) {}
 
 const ADJECTIVES: [&str; 2] = ["Holy", "Inscrutable"];
 

@@ -1,5 +1,8 @@
 # Starships
 
+* [StarShip Classification](Starship Classification)
+* [Starship Equipment](Starship Equipment)
+
 ## Starship Classification
 
 ### Class 0: Pod
@@ -156,14 +159,23 @@ Centurions are basically moving space stations. Gargantuan in size. Think DeathS
 * Mass:
 * Crew: 30-200
 
-## Equipment
+## Starship Equipment
 
-### Power
+### Power Generators
+
+Power Generators are used to provide a constant source of power that fuels the ship. Generators often have semi variable
+outputs but excess energy must be captured and stored or it will be released as heat.
+
+#### Solar Generator
+
+Solar generators are cheap, and perfect for low power situations. Solar Panels tend to have a 15% conversion efficiency
+and output 150 watts per square meter. The major benefit however is they require no fuel as long as they are in 
+sunlight. 
 
 #### Biofuel Generator
 
 Cheap, inexpensive and not very powerful. Biofuel generators are often paired as a backup with Solar panels and 
-batteries for intra system vessels or as an emergency power when a more powerful generator fails.
+batteries for intra system vessels or as an emergency power when a more powerful generator fails. 
 
 | Fuel Use     | Power           | 
 |--------------|-----------------|
@@ -204,6 +216,21 @@ explosion that occurs when a black hole evaporates is impressive.
 A Zero Point Energy Generator or Zippy Generator while expensive is one of the most advanced and capable methods of
 power generation known throughout the galaxy. Capable of powering the most massive of spacecraft without fuel.
 
+### Powerbanks
+
+Powerbanks are power storage used to store and release power as necessary. Paired with Solar power and generators to 
+capture excess power not actively used, they can provide continual power when generators are off or a ship is in the 
+shadow of a planet. Small ships may recharge aat a station with a large power bank and only have a generator for 
+emergencies. 
+
+Chemical batteries have been around for millennia and data back to the earliest civilizations of mankind. Often having 
+low density and discharge rates, they are cheap but readily available.
+
+### Supercapacitors
+
+Supercapacitors are a form of power storage that is designed for high capacity and rapid discharge. Frequently paired
+with shields, warp drives, energy weapons, and hypergate generators. 
+
 ### Realspace Drives
 
 #### Ion Thrusters
@@ -219,15 +246,16 @@ short distances and sublight travel.
 #### Warp Drives
 
 Warp drives distort space around a ship allowing it to side step physics and travel faster than light. They require a
-massive amount of power to operate but allow a ship to move it's frame of reference faster than the speed of light. 
+massive amount of power to operate but allow a ship to move its frame of reference faster than the speed of light. 
 The more mass you are warping space around and the faster shift your reference frame the more power the field emitter 
 requires to maintain the warp field. They are one of the most frequently used methods of traveling faster than the 
-speed of light without outside assistance.
+speed of light within a system without outside assistance. Due to the vast space between systems while possible to 
+travel between system with a warp drive, it's not common.
 
 ### Hyperspace
 
 Hyperspace is an alternate dimension which is used instead of faster than light travel between locations that would
-otherwise take longer longer to travel in normal space. This dimension appears as a deep red chaotic storm and is nigh
+otherwise take longer to travel in normal space. This dimension appears as a deep red chaotic storm and is nigh
 impossible to navigate without hypergate beacons, or a natural psionic talent. Hyper gates allow a ship to shift 
 between normal space and into hyperspace and require insane amounts of power to operate. Carrying a hypergate generator
 is virtually impossible for all but the most massive of ships. 
@@ -239,35 +267,127 @@ minimal amount of power to operate they are a common sight on most starships.
 
 ### Armor
 
+#### 
+
 #### Ablative Armor
 
-### Shielding
+Ablative Armor is best used to absorb the impact of kinetic impacts and fracture instead of passing the force deeper 
+into the frame. Ablative armor is frequently layered to absorb incoming kinetic damage.
 
-#### Force Shields
+#### Fibrous Armor
 
-### Weapons
+Fibrous armor is a complex weave of plastics, metals, and laminate designed to absorb both energy and kinetic damage in
+even amounts. 
+
+#### Plate Armor
+
+Layered Hardened Plate is the standard on star ships. 
+
+### Force Shields
+
+#### Gravatonic Shielding
+
+Magical Forcefields from another dimension!
+
+### Kinetic Weapons
+
+Things that go boom boom.
+
+#### Ballistic 
+
+Traditional Ballistic cartridge weapons.
+
+#### Mass Drivers
+
+An Electromagnetic weapon.
+
+### Missile Weapons
+
+Self-propelled explosives.
+
+#### Nuclear weapons
+
+Self-propelled thermo-nuclear explosives do massive damage upon impact.
+
+### Energy Weapons
+
+Things that go pew-pew.
+
+#### Laser Weapons
+
+Focused Photon blasts. 
+
+#### Particle Cannon
+
+Balls of superheated Protons.
 
 ### Passive Sensors
 
+Silent Sensors which detect their environment without giving away their position.
+
+#### Electromagnetic Sensors
+
+Full spectrum electromagnetic sensors.
+
+#### Gravametric Sensors
+
+Sensors which detect gravity fluctuations.
+
 ### Active Sensors
 
+Sensors which gain more information but alert others to your presence.
+
+### Computers
+
+Smart rocks. Electronic intelligence ships require to keep all things running. 
+
+#### Navigation Software
+
+Software to navigate around the universe. More efficient Jumps, Auto landing, etc. 
+
+#### Targeting Software
+
+Software to assist in combat, helps with both offensive and defensive capabilities.
+
+#### Scanner Software
+
+Software to assist in analysis of sensor readings, automate analysis and provide better information quicker.
+
+#### Firewall Software
+
+Communications Software to help defend against hacking software. 
+
+#### Hacking Software
+
+Communications Software to assist in attacking, spoofing, deception, and interrogation. 
+
+
+### AI Core
+
+Artificial Intelligence.
+
+### Life Support
+
+Keep crew alive
+
+### Communications
+
+#### Transponder
+
+Required for every ship.
+
+#### Short Range Communications
+
+#### Long Range Communications
+
 ### Specialty Equipment
+
+#### Mining Lasers
+
+#### Tractor Beams
 
 #### Cloaking Device
 
 Electromagnetic capture device designed to restrict outgoing electromagnetic energy creating a "black" spot where your
 ship would have been. Not actually invisible but pretty close when in the void of space.Equipment
-
-#### Computer System
-
-### Software
-
-#### Flight Software
-
-#### Targeting Software
-
-#### Scanner Software
-
-#### Communication Software
-
 

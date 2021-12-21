@@ -17,6 +17,8 @@
 //
 
 use bevy::prelude::*;
+use bevy::utils::HashMap;
+use bevy_tilemap::prelude::*;
 
 pub fn initialize_tilespace(mut commands: Commands) {}
 

@@ -16,5 +16,8 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-/// Player Tag
-pub struct PlayerAvatar;
+mod input;
+mod setup;
+
+pub use self::input::{process_gamepad_input, process_keyboard_input, process_mouse_input};
+pub use self::setup::{cleanup_tilespace, initialize_tilespace, setup_tilespace, update_tilespace};

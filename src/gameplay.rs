@@ -16,10 +16,7 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
+mod tilespace;
 use bevy::prelude::*;
 
-pub struct PauseMenuButtonMaterials {
-    pub normal: Handle<ColorMaterial>,
-    pub hovered: Handle<ColorMaterial>,
-    pub pressed: Handle<ColorMaterial>,
-}
+pub fn bootstrap_gameplay(app: &mut AppBuilder) {}

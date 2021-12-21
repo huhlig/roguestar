@@ -16,14 +16,36 @@
 //  along with this program.  If not, see <http://www.gnu.org/licenses/>.
 //
 
-//! Worldgen is responsible for loading or creating a new Universe to play in.
-mod params;
-mod sector;
-mod setup;
-mod galaxy;
+use bevy::prelude::*;
 
-pub use self::params::Parameters;
-pub use self::galaxy::generate_galaxy;
-pub use self::sector::generate_sector;
-pub use self::setup::{cleanup_worldgen, setup_worldgen, update_worldgen};
+/// MainMenu Tag Component
+pub struct MainMenuTag;
 
+/// Pause Menu Tag
+pub struct PauseMenuTag;
+
+/// Actions in Main Menu
+pub enum MainMenuAction {
+    NewGame,
+    LoadGame,
+    Settings,
+    Credits,
+    QuitGame,
+}
+
+/// Actions in Pause Menu
+pub enum PauseMenuAction {
+    Resume,
+    LoadGame,
+    SaveGame,
+    Settings,
+    MainMenu,
+    QuitGame,
+}
+
+/// Button Materials
+pub struct MenuButtonMaterials {
+    pub normal: Handle<ColorMaterial>,
+    pub hovered: Handle<ColorMaterial>,
+    pub pressed: Handle<ColorMaterial>,
+}
